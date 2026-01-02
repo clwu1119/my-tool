@@ -25,7 +25,7 @@
       -webkit-user-select: none;
     }
 
-    /* 頂部導航 */
+    /* 頂部導航 - 移除返回鍵後重新配置 */
     .app-header {
       position: sticky;
       top: 0;
@@ -70,7 +70,6 @@
 
     td:active { background: #E5E5EA; }
 
-    /* 標記今日日期 */
     .today-highlight {
       background-color: #FFF9C4 !important;
       outline: 2px solid var(--ios-blue);
@@ -97,7 +96,6 @@
       overflow: hidden;
     }
 
-    /* 底部操作欄 */
     .bottom-bar {
       position: fixed;
       bottom: 0;
@@ -153,8 +151,7 @@
 <body>
 
   <header class="app-header">
-    <div onclick="location.href='index.html'" style="cursor:pointer;"><i class="bi bi-chevron-left"></i></div>
-    <div style="font-weight: 800; font-size: 1.1rem;">📅 排假表</div>
+    <div style="font-weight: 800; font-size: 1.2rem;">📅 排假表</div>
     <select id="monthJump" class="form-select form-select-sm" style="width: auto; background: #efeff4; border: none; border-radius: 10px;"></select>
   </header>
 
@@ -165,7 +162,6 @@
   <button id="todayBtn"><i class="bi bi-cursor-fill"></i></button>
 
   <script>
-    // 1. 基本數據配置
     const years = [2025, 2026];
     const monthNames = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
     const people = [
@@ -179,12 +175,11 @@
     let currentPerson = people[0].name;
     let calendarData = JSON.parse(localStorage.getItem('my_calendar_data')) || {};
 
-    // 2. 儲存函數
     function saveToLocal() {
       localStorage.setItem('my_calendar_data', JSON.stringify(calendarData));
     }
 
-    // 3. 渲染人員選擇器
+    // 渲染選擇器
     const selector = document.getElementById('peopleSelector');
     people.forEach(p => {
       const div = document.createElement('div');
@@ -203,7 +198,7 @@
       selector.appendChild(div);
     });
 
-    // 4. 渲染月份跳轉選單
+    // 渲染月份跳轉
     const jump = document.getElementById('monthJump');
     years.forEach(y => {
       monthNames.forEach((m, i) => {
@@ -218,7 +213,7 @@
       if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
     };
 
-    // 5. 渲染日曆核心
+    // 核心渲染
     function renderApp() {
       const root = document.getElementById('calendar-root');
       const now = new Date();
@@ -227,7 +222,6 @@
       years.forEach(year => {
         for (let month = 0; month < 12; month++) {
           const monthId = `cal-${year}-${month+1}`;
-          
           const header = document.createElement('div');
           header.className = 'month-header';
           header.id = monthId;
@@ -238,18 +232,14 @@
           card.className = 'calendar-card';
           
           let tableHtml = `<table><thead><tr><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th><th>日</th></tr></thead><tbody><tr>`;
-          
           let firstDay = new Date(year, month, 1).getDay();
           if (firstDay === 0) firstDay = 7;
-          
           for (let i = 1; i < firstDay; i++) tableHtml += `<td></td>`;
 
           const daysInMonth = new Date(year, month + 1, 0).getDate();
           for (let day = 1; day <= daysInMonth; day++) {
             const key = `${year}-${month+1}-${day}`;
             const tags = calendarData[key] || [];
-            
-            // 判斷是否為今日
             const isToday = now.getFullYear() === year && now.getMonth() === month && now.getDate() === day;
             
             let tagsHtml = `<div id="tags-${key}">`;
@@ -263,10 +253,8 @@
               <span class="day-label">${day}</span>
               ${tagsHtml}
             </td>`;
-
             if ((firstDay + day - 1) % 7 === 0) tableHtml += `</tr><tr>`;
           }
-          
           tableHtml += `</tr></tbody></table>`;
           card.innerHTML = tableHtml;
           root.appendChild(card);
@@ -274,7 +262,6 @@
       });
     }
 
-    // 6. 點擊切換狀態
     window.toggleDate = function(key) {
       if (!calendarData[key]) calendarData[key] = [];
       const idx = calendarData[key].indexOf(currentPerson);
@@ -295,7 +282,6 @@
       container.innerHTML = html;
     }
 
-    // 7. 自動跳轉功能
     function scrollToCurrentMonth(isSmooth = false) {
       const now = new Date();
       const targetId = `cal-${now.getFullYear()}-${now.getMonth()+1}`;
@@ -308,7 +294,6 @@
 
     document.getElementById('todayBtn').onclick = () => scrollToCurrentMonth(true);
 
-    // 啟動
     renderApp();
     setTimeout(() => scrollToCurrentMonth(false), 200);
   </script>
