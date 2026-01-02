@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>Meeting Pro Ultra</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --bg: #F5F5F7; /* iOS 淺灰背景 */
+      --card-bg: #FFFFFF;
+      --text-primary: #1D1D1F;
+      --text-secondary: #86868B;
+      --accent: #007AFF;
+      --danger: #FF3B30;
+      --shadow: 0 8px 30px rgba(0,0,0,0.06);
+      --card-radius: 20px;
+    }
+
+    body.dark {
+      --bg: #000000;
+      --card-bg: #1C1C1E;
+      --text-primary: #F5F5F7;
+      --text-secondary: #86868B;
+      --accent: #0A84FF;
+      --shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      padding-bottom: 140px; /* 為底部懸浮島留空間 */
+      transition: background 0.3s ease;
+    }
+
+    /* 頂部導航 */
+    .header {
+      padding: 60px 24px 10px; /* 增加頂部留白，更有質感 */
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    
+    .app-title {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .top-action-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(120, 120, 128, 0.1);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-primary);
+      border: none;
+      font-size: 18px;
+      transition: transform 0.1s;
+    }
+    .top-action-btn:active { transform: scale(0.9); }
+
+    /* 歷史滑動條 (修正切邊問題) */
+    .history-container {
+      margin-top: 20px;
+      width: 100%;
+      overflow-x: auto;
+      padding: 10px 24px 30px 24px; /* 左右 padding 修正切邊 */
+      display: flex;
+      gap: 12px;
+      scrollbar-width: none; /* Firefox */
+    }
+    .history-container::-webkit-scrollbar { display: none; }
+
+    .history-card {
+      min-width: 100px;
+      height: 70px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border: 1px solid transparent;
+      flex-shrink: 0;
+      opacity: 0.6;
+      transform: scale(0.95);
+    }
+
+    .history-card.active {
+      opacity: 1;
+      transform: scale(1);
+      background: var(--text-primary); /* 選中變黑(深色模式變白) */
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .history-card .date { font-size: 10px; color: var(--text-secondary); margin-bottom: 4px; }
+    .history-card .subj { font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    /* Active 狀態文字變色 */
+    .history-card.active .date { color: rgba(255,255,255,0.6); }
+    .history-card.active .subj { color: var(--bg); } /* 反色 */
+    body.dark .history-card.active .subj { color: #000; }
+    body.dark .history-card.active .date { color: rgba(0,0,0,0.5); }
+
+    /* 主內容區 */
+    .main-container { padding: 0 24px; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .section-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin: 30px 0 10px 4px;
+      letter-spacing: 0.05em;
+    }
+
+    /* 蘋果風格輸入群組 */
+    .input-group {
+      background: var(--card-bg);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 0.5px solid rgba(120, 120, 128, 0.1);
+      position: relative;
+    }
+    .field-row:last-child { border-bottom: none; }
+
+    .field-label { width: 70px; font-size: 16px; font-weight: 500; }
+    
+    .field-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 16px;
+      color: var(--accent);
+      text-align: right;
+      outline: none;
+      font-weight: 500;
+    }
+    
+    /* 筆記區域 */
+    .note-area {
+      width: 100%;
+      min-height: 160px;
+      border: none;
+      background: transparent;
+      padding: 0;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      resize: none;
+      outline: none;
+    }
+
+    /* 待辦事項清單 */
+    .todo-item {
+      display: flex;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 16px 20px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      transition: transform 0.2s;
+    }
+    .todo-item:active { transform: scale(0.98); }
+
+    .todo-check {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      border: 2px solid #D1D1D6;
+      margin-right: 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: transparent;
+    }
+    .todo-item.done .todo-check { background: var(--accent); border-color: var(--accent); color: white; }
+    .todo-item.done .todo-input { text-decoration: line-through; color: var(--text-secondary); }
+
+    .todo-content { flex: 1; }
+    .todo-input {
+      width: 100%; border: none; background: transparent;
+      font-size: 16px; color: var(--text-primary); outline: none; font-weight: 500;
+    }
+    .todo-meta { font-size: 12px; color: var(--text-secondary); margin-top: 4px; display: flex; gap: 8px; }
+
+    /* 懸浮底部島 */
+    .floating-island {
+      position: fixed;
+      bottom: 30px; left: 50%; transform: translateX(-50%);
+      width: auto;
+      background: rgba(30, 30, 30, 0.85);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      padding: 6px 8px;
+      border-radius: 100px;
+      display: flex;
+      gap: 4px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+      z-index: 1000;
+    }
+    
+    .island-btn {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 20px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .island-btn.main { background: var(--accent); color: white; width: 80px; border-radius: 40px; }
+    .island-btn:active { opacity: 0.7; }
+
+    /* Placeholder 顏色 */
+    ::placeholder { color: #C7C7CC; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="app-title">會議紀錄</div>
+    <div style="display: flex; gap: 10px;">
+      <button class="top-action-btn" onclick="toggleTheme()"><i class="bi bi-moon-stars-fill"></i></button>
+      <button class="top-action-btn" style="color: var(--danger); background: rgba(255, 59, 48, 0.1);" onclick="deleteMeeting()">
+        <i class="bi bi-trash3-fill"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="history-container" id="historyList"></div>
+
+  <div class="main-container">
+    
+    <div class="section-label">基本資訊</div>
+    <div class="input-group">
+      <div class="field-row">
+        <div class="field-label">主題</div>
+        <input type="text" class="field-input" id="m-subject" placeholder="輸入會議主題">
+      </div>
+      <div class="field-row">
+        <div class="field-label">日期</div>
+        <input type="date" class="field-input" id="m-date">
+      </div>
+      <div class="field-row">
+        <div class="field-label">地點</div>
+        <input type="text" class="field-input" id="m-loc" placeholder="地點">
+      </div>
+    </div>
+
+    <div class="section-label">討論重點</div>
+    <div class="input-group" style="padding: 20px;">
+      <textarea class="note-area" id="m-notes" placeholder="點擊此處開始輸入摘要與決議..."></textarea>
+    </div>
+
+    <div class="section-label" style="display:flex; justify-content:space-between; align-items:center;">
+      <span>待辦事項</span>
+      <span style="font-size:12px; color:var(--accent);" onclick="addTodo()">+ 新增</span>
+    </div>
+    <div id="todo-list"></div>
+
+  </div>
+
+  <div class="floating-island">
+    <button class="island-btn" onclick="exportCSV()"><i class="bi bi-box-arrow-up"></i></button>
+    <button class="island-btn main" onclick="createNewMeeting()"><i class="bi bi-plus-lg"></i></button>
+    <button class="island-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})"><i class="bi bi-arrow-up"></i></button>
+  </div>
+
+  <script>
+    let db = JSON.parse(localStorage.getItem('meeting_ultra_db')) || [];
+    let currentId = null;
+
+    // 初始化
+    function init() {
+      if (db.length === 0) createNewMeeting();
+      else {
+        // 預設開啟最後一筆
+        currentId = db[db.length - 1].id;
+        renderUI();
+      }
+    }
+
+    // 建立新會議 (完全空白)
+    function createNewMeeting() {
+      const newMeet = {
+        id: Date.now(),
+        subject: '', // 空白
+        date: new Date().toISOString().split('T')[0],
+        loc: '',     // 空白
+        notes: '',   // 空白
+        todos: []    // 空白
+      };
+      db.push(newMeet);
+      currentId = newMeet.id;
+      
+      saveData();
+      renderUI();
+      
+      // 視覺反饋：滾動到頂部並聚焦主題
+      window.scrollTo({top:0, behavior:'smooth'});
+      setTimeout(() => document.getElementById('m-subject').focus(), 300);
+    }
+
+    // 刪除目前會議
+    function deleteMeeting() {
+      if (db.length <= 1) {
+        if(confirm("這是最後一筆紀錄，確定要清空嗎？")) {
+          db = [];
+          createNewMeeting();
+        }
+        return;
+      }
+
+      if (confirm("確定要刪除這場會議紀錄？")) {
+        db = db.filter(m => m.id !== currentId);
+        currentId = db[db.length - 1].id;
+        saveData();
+        renderUI();
+      }
+    }
+
+    // 渲染所有介面
+    function renderUI() {
+      // 1. 找到當前數據
+      const data = db.find(m => m.id === currentId);
+      if (!data) return;
+
+      // 2. 渲染歷史條
+      const historyList = document.getElementById('historyList');
+      historyList.innerHTML = '';
+      // 反轉順序顯示，讓最新的在最左邊
+      [...db].reverse().forEach(m => {
+        const el = document.createElement('div');
+        el.className = `history-card ${m.id === currentId ? 'active' : ''}`;
+        el.onclick = () => { currentId = m.id; renderUI(); };
+        el.innerHTML = `
+          <div class="date">${m.date.slice(5)}</div>
+          <div class="subj">${m.subject || '未命名會議'}</div>
+        `;
+        historyList.appendChild(el);
+      });
+
+      // 3. 填充表單值
+      document.getElementById('m-subject').value = data.subject;
+      document.getElementById('m-date').value = data.date;
+      document.getElementById('m-loc').value = data.loc;
+      document.getElementById('m-notes').value = data.notes;
+
+      // 4. 渲染 Todos
+      const todoList = document.getElementById('todo-list');
+      todoList.innerHTML = '';
+      data.todos.forEach((t, idx) => {
+        const item = document.createElement('div');
+        item.className = `todo-item ${t.done ? 'done' : ''}`;
+        item.innerHTML = `
+          <div class="todo-check" onclick="toggleTodo(${idx})"><i class="bi bi-check-lg"></i></div>
+          <div class="todo-content">
+            <input type="text" class="todo-input" value="${t.text}" placeholder="輸入任務..." oninput="updateTodo(${idx}, 'text', this.value)">
+            <div class="todo-meta">
+              <input value="${t.owner}" placeholder="負責人" oninput="updateTodo(${idx}, 'owner', this.value)" style="border:none;background:transparent;width:60px;color:inherit;">
+            </div>
+          </div>
+          <i class="bi bi-x" style="font-size:24px; color:#C7C7CC; padding:10px" onclick="removeTodo(${idx})"></i>
+        `;
+        todoList.appendChild(item);
+      });
+    }
+
+    // 監聽輸入並自動存檔
+    document.getElementById('m-subject').addEventListener('input', (e) => updateField('subject', e.target.value));
+    document.getElementById('m-date').addEventListener('input', (e) => updateField('date', e.target.value));
+    document.getElementById('m-loc').addEventListener('input', (e) => updateField('loc', e.target.value));
+    document.getElementById('m-notes').addEventListener('input', (e) => updateField('notes', e.target.value));
+
+    function updateField(key, val) {
+      const idx = db.findIndex(m => m.id === currentId);
+      if (idx !== -1) {
+        db[idx][key] = val;
+        saveData();
+        // 如果改的是標題，更新歷史列表的顯示
+        if (key === 'subject') {
+           document.querySelector(`.history-card.active .subj`).textContent = val || '未命名會議';
+        }
+      }
+    }
+
+    // Todo 相關邏輯
+    function addTodo() {
+      const idx = db.findIndex(m => m.id === currentId);
+      db[idx].todos.push({ text: '', owner: '', done: false });
+      saveData();
+      renderUI();
+    }
+
+    function updateTodo(tIdx, key, val) {
+      const mIdx = db.findIndex(m => m.id === currentId);
+      db[mIdx].todos[tIdx][key] = val;
+      saveData();
+    }
+
+    function toggleTodo(tIdx) {
+      const mIdx = db.findIndex(m => m.id === currentId);
+      db[mIdx].todos[tIdx].done = !db[mIdx].todos[tIdx].done;
+      saveData();
+      renderUI();
+    }
+
+    function removeTodo(tIdx) {
+      const mIdx = db.findIndex(m => m.id === currentId);
+      db[mIdx].todos.splice(tIdx, 1);
+      saveData();
+      renderUI();
+    }
+
+    // 系統功能
+    function saveData() {
+      localStorage.setItem('meeting_ultra_db', JSON.stringify(db));
+    }
+
+    function exportCSV() {
+      const data = db.find(m => m.id === currentId);
+      let csv = `\uFEFF主題,${data.subject}\n日期,${data.date}\n地點,${data.loc}\n\n會議筆記:\n"${data.notes.replace(/"/g, '""')}"\n\n待辦事項:\n狀態,任務,負責人\n`;
+      data.todos.forEach(t => {
+        csv += `${t.done?'已完成':'進行中'},"${t.text}",${t.owner}\n`;
+      });
+      const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${data.subject || '會議紀錄'}.csv`;
+      link.click();
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+    }
+
+    // 啟動
+    init();
+  </script>
+</body>
+</html>
