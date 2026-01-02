@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wu Jia Order System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #F8F9FA; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .ios-card { background: white; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .section-title { font-size: 0.9rem; font-weight: 700; color: #1a1a1a; margin-left: 4px; margin-bottom: 8px; display: flex; align-items: center; }
+        .section-title i { margin-right: 8px; color: #EAB308; }
+        
+        .choice-input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .choice-label { 
+            display: flex; align-items: center; justify-content: center;
+            padding: 12px 4px; border-radius: 12px; background: #f1f2f6; 
+            font-size: 0.85rem; transition: all 0.2s; cursor: pointer;
+            border: 2px solid transparent; color: #4b4b4b;
+        }
+        .choice-input:checked + .choice-label { 
+            background: #ffffff; border-color: #EAB308; color: #854d0e; font-weight: 600;
+            box-shadow: 0 4px 12px rgba(234,179,8,0.15);
+        }
+        
+        select {
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='C19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.25rem;
+        }
+        /* 優化刪除按鈕不被擠出的樣式 */
+        .basket-item { border-left: 4px solid #EAB308; display: flex; align-items: center; justify-content: space-between; }
+        .basket-content { min-width: 0; flex: 1; padding-right: 8px; }
+    </style>
+</head>
+<body class="p-4 max-w-md mx-auto pb-24">
+
+    <header class="mb-6 mt-4 text-center">
+        <h1 class="text-2xl font-black text-gray-900 tracking-tight">WU JIA (吳家)</h1>
+        <p class="text-yellow-600 font-bold text-sm">TAIWAN NO.1</p>
+    </header>
+
+    <div class="section-title"><i class="fas fa-leaf"></i> DRINK / 飲品 (吳家)</div>
+    <div class="ios-card p-2">
+        <select id="drinkSelect" class="w-full p-4 bg-transparent text-base font-medium focus:outline-none cursor-pointer">
+            <option value="">請選擇飲品...</option>
+            <optgroup label="水果拚好茶 (Trái Cây)">
+                <option value="★Hồng Trà Chanh dai loan / 台灣檸檬紅茶">★Hồng Trà Chanh dai loan / 台灣檸檬紅茶</option>
+                <option value="★Trà Xanh Chanh dai loan / 台灣檸檬綠茶">★Trà Xanh Chanh dai loan / 台灣檸檬綠茶</option>
+                <option value="Hồng Trà Chanh Vải Thiều / 荔枝檸檬紅茶">Hồng Trà Chanh Vải Thiều / 荔枝檸檬紅茶</option>
+                <option value="Bí đao Chan / 檸檬冬瓜綠茶">Bí đao Chan / 檸檬冬瓜綠茶</option>
+                <option value="Hồng Trà đào / 蜜桃紅">Hồng Trà đào / 蜜桃紅</option>
+                <option value="Trà Xanh / 蜜桃綠">Trà Xanh / 蜜桃綠</option>
+                <option value="Ô Long Đào / 蜜桃烏龍茶">Ô Long Đào / 蜜桃烏龍茶</option>
+                <option value="★Trà Chanh Ổi Hồng / 粉色浪漫">★Trà Chanh Ổi Hồng / 粉色浪漫</option>
+                <option value="Trà Ô Long Nho / 葡萄烏龍茶">Trà Ô Long Nho / 葡萄烏龍茶</option>
+            </optgroup>
+            <optgroup label="香濃奶茶 (Trà Sữa)">
+                <option value="★Trà Sữa Đài Loan / 台灣奶茶">★Trà Sữa Đài Loan / 台灣奶茶</option>
+                <option value="Ô Long Sữa / 烏龍奶">Ô Long Sữa / 烏龍奶</option>
+                <option value="Trà Xanh Sữa / 奶綠茶">Trà Xanh Sữa / 奶綠茶</option>
+                <option value="Trà Sữa Vải Thiều / 荔枝奶茶">Trà Sữa Vải Thiều / 荔枝奶茶</option>
+                <option value="Trà Sữa Bí Đao / 冬瓜奶茶">Trà Sữa Bí Đao / 冬瓜奶茶</option>
+                <option value="Trà Sữa Trân Châu Đường Đen / 黑糖珍珠奶茶">Trà Sữa Trân Châu Đường Đen / 黑糖珍珠奶茶</option>
+                <option value="Trà Sữa Socola / 巧克力奶茶">Trà Sữa Socola / 巧克力奶茶</option>
+                <option value="Trà Khoai Môn Nghiền / 芋泥奶茶">Trà Khoai Môn Nghiền / 芋泥奶茶</option>
+            </optgroup>
+            <optgroup label="Milk 拿鐵 (Latte)">
+                <option value="★Hồng Trà Latte / 紅茶拿鐵">★Hồng Trà Latte / 紅茶拿鐵</option>
+                <option value="Latte Vải Thiều / 荔枝拿鐵">Latte Vải Thiều / 荔枝拿鐵</option>
+                <option value="Bí đao Latte / 冬瓜拿鐵">Bí đao Latte / 冬瓜拿鐵</option>
+                <option value="★Ô Long Latte / 烏龍拿鐵">★Ô Long Latte / 烏龍拿鐵</option>
+                <option value="Trà Xanh Latte / 綠茶拿鐵">Trà Xanh Latte / 綠茶拿鐵</option>
+                <option value="★Trân Châu Đường Đen Latte / 黑糖珍珠拿鐵">★Trân Châu Đường Đen Latte / 黑糖珍珠拿鐵</option>
+                <option value="Sữa Tươi Khoai Môn Nghiền / 芋泥鮮奶">Sữa Tươi Khoai Môn Nghiền / 芋泥鮮奶</option>
+                <option value="Sữa Tươi Trân Châu Đường Đen / 黑糖珍珠鮮奶">Sữa Tươi Trân Châu Đường Đen / 黑糖珍珠鮮奶</option>
+            </optgroup>
+            <optgroup label="解渴純喝茶 (Trà Nguyên Bản)">
+                <option value="★Hồng Trà Đài Loan / 台灣紅茶">★Hồng Trà Đài Loan / 台灣紅茶</option>
+                <option value="Hồng Trà Vải Thiều / 荔枝紅茶">Hồng Trà Vải Thiều / 荔枝紅茶</option>
+                <option value="Trà Bí đao Ngô Gia / 吳家冬瓜茶">Trà Bí đao Ngô Gia / 吳家冬瓜茶</option>
+                <option value="★Trà Xanh Hoa Nhài / 茉莉綠茶">★Trà Xanh Hoa Nhài / 茉莉綠茶</option>
+                <option value="★Trà Ô Long Mộc Hương / 竹香烏龍茶">★Trà Ô Long Mộc Hương / 竹香烏龍茶</option>
+                <option value="Hồng Trà Bí Đao / 冬瓜紅">★Hồng Trà Bí Đao / 冬瓜紅</option>
+                <option value="Trà Xanh Bí Đao / 冬瓜綠">★Trà Xanh Bí Đao / 冬瓜綠</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <div class="section-title"><i class="fas fa-plus-circle"></i> TOPPINGS / 配料</div>
+    <div class="ios-card p-2">
+        <select id="toppingSelect" class="w-full p-4 bg-transparent text-base font-medium focus:outline-none cursor-pointer">
+            <option value="">無配料 (Không Topping)</option>
+            <option value="Thạch Sương Sáo / 仙草凍">Thạch Sương Sáo / 仙草凍</option>
+            <option value="Hạt É / 奇亞籽">Hạt É / 奇亞籽</option>
+            <option value="Thạch Dừa Nguyên Vị / 原味椰果">Thạch Dừa Nguyên Vị / 原味椰果</option>
+            <option value="Thạch O Ngô Gia / 粉粿">Thạch O Ngô Gia / 粉粿</option>
+            <option value="Thạch Sợi Lá Dứa / 斑蘭粉條">Thạch Sợi Lá Dứa / 斑蘭粉條</option>
+            <option value="Trân Châu 30 Trắng / 原味寒天">Trân Châu 30 Trắng / 原味寒天</option>
+            <option value="Trân Châu Đường Đen / 黑糖珍珠">Trân Châu Đường Đen / 黑糖珍珠</option>
+            <option value="Hạt Thủy Tinh Củ Năng / 馬蹄爆爆珠">Hạt Thủy Tinh Củ Năng / 馬蹄爆爆珠</option>
+            <option value="Trân Châu Hoàng Kim Baby / 黃金baby珍珠">Trân Châu Hoàng Kim Baby / 黃金baby珍珠</option>
+            <option value="Trân Châu Khoai Môn / 小芋圓">Trân Châu Khoai Môn / 小芋圓</option>
+            <option value="Hạt Sen / 蓮子">Hạt Sen / 蓮子</option>
+            <option value="Pudding Trứng / 蛋蛋布丁">Pudding Trứng / 蛋蛋布丁</option>
+            <option value="Kem Cheese / 朵朵奶蓋">Kem Cheese / 朵朵奶蓋</option>
+            <option value="Khoai Môn Nghiền / 芋泥">Khoai Môn Nghiền / 芋泥</option>
+        </select>
+    </div>
+
+    <div class="section-title"><i class="fas fa-sliders-h"></i> OPTIONS / 規格</div>
+    <div class="ios-card p-4">
+        <div class="mb-5">
+            <div class="text-xs font-bold text-gray-400 mb-2 tracking-widest">SUGAR / 甜度</div>
+            <div id="sugarGrid" class="grid grid-cols-4 gap-2"></div>
+        </div>
+        <div class="mb-5">
+            <div class="text-xs font-bold text-gray-400 mb-2 tracking-widest">ICE / 冰量</div>
+            <div id="iceGrid" class="grid grid-cols-4 gap-2"></div>
+        </div>
+        <div>
+            <div class="text-xs font-bold text-gray-400 mb-2 tracking-widest">SIZE / 尺寸</div>
+            <div id="sizeGrid" class="flex gap-2"></div>
+        </div>
+    </div>
+
+    <div class="section-title"><i class="fas fa-calculator"></i> QTY / 數量</div>
+    <div class="ios-card p-4 flex items-center justify-between">
+        <span class="text-sm font-bold text-gray-700">份數</span>
+        <div class="flex items-center bg-gray-100 rounded-lg p-1">
+            <button onclick="changeQty(-1)" class="w-8 h-8 flex items-center justify-center text-yellow-700 font-bold">-</button>
+            <input type="number" id="qtyInput" value="1" min="1" max="30" readonly class="w-10 bg-transparent text-center font-black text-gray-800 border-none outline-none">
+            <button onclick="changeQty(1)" class="w-8 h-8 flex items-center justify-center text-yellow-700 font-bold">+</button>
+        </div>
+    </div>
+
+    <button onclick="addToBasket()" class="w-full py-4 border-2 border-yellow-500 text-yellow-600 rounded-2xl font-bold mb-4 active:bg-yellow-50 transition-all">
+        ADD TO LIST / 加入待點清單
+    </button>
+
+    <div class="section-title"><i class="fas fa-shopping-basket"></i> CURRENT BASKET / 已加入飲品</div>
+    <div id="basketArea" class="space-y-3 mb-6">
+        <p class="text-center text-gray-400 text-sm py-4 italic">尚未加入飲品</p>
+    </div>
+
+    <button onclick="generateOrder()" class="w-full py-5 bg-yellow-500 text-white rounded-2xl font-black text-lg shadow-xl shadow-yellow-100 active:scale-[0.98] transition-all">
+        GENERATE ORDER / 生成點單
+    </button>
+
+    <div id="resultModal" class="fixed inset-0 bg-black/60 hidden items-end sm:items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-t-[35px] sm:rounded-[30px] w-full max-w-sm p-8 animate-slide-up shadow-2xl">
+            <div class="w-16 h-1.5 bg-gray-200 rounded-full mx-auto mb-8"></div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4 text-center">吳家批次點單</h3>
+            <div id="resultText" class="bg-gray-50 p-6 rounded-2xl text-gray-800 font-semibold break-words mb-8 border border-gray-100 text-base leading-relaxed shadow-inner max-h-60 overflow-y-auto"></div>
+            <button onclick="copyOrder()" class="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold text-lg active:scale-95 transition-all mb-4">複製全部內容</button>
+            <button onclick="closeModal()" class="w-full py-2 text-gray-400 font-medium text-sm">關閉視窗</button>
+        </div>
+    </div>
+
+    <script>
+        const DATA = {
+            sugar: ["0% đường", "30% đường", "50% đường", "100% đường"],
+            ice: ["0% đá", "30% đá", "50% đá", "100% đá"],
+            sizes: ["L", "M"]
+        };
+
+        let basket = [];
+
+        function renderRadio(id, list, name) {
+            const container = document.getElementById(id);
+            list.forEach(item => {
+                container.innerHTML += `
+                    <label class="relative flex-1 cursor-pointer">
+                        <input type="radio" name="${name}" value="${item}" class="choice-input">
+                        <div class="choice-label font-bold text-[10px] uppercase">${item.split(' ')[0]}</div>
+                    </label>`;
+            });
+        }
+
+        renderRadio('sugarGrid', DATA.sugar, 'sugar');
+        renderRadio('iceGrid', DATA.ice, 'ice');
+        renderRadio('sizeGrid', DATA.sizes, 'size');
+
+        function changeQty(val) {
+            const input = document.getElementById('qtyInput');
+            let curr = parseInt(input.value) + val;
+            if(curr >= 1 && curr <= 30) input.value = curr;
+        }
+
+        function cleanText(text) {
+            return text.replace('★', '').split(' / ')[0].trim();
+        }
+
+        function addToBasket() {
+            const drinkRaw = document.getElementById('drinkSelect').value;
+            const toppingRaw = document.getElementById('toppingSelect').value;
+            const sugar = document.querySelector('input[name="sugar"]:checked')?.value;
+            const ice = document.querySelector('input[name="ice"]:checked')?.value;
+            const size = document.querySelector('input[name="size"]:checked')?.value;
+            const qty = document.getElementById('qtyInput').value;
+
+            if (!drinkRaw || !sugar || !ice || !size) { alert("請完整選擇規格！"); return; }
+
+            const vnLine = `${cleanText(drinkRaw)}${toppingRaw ? ' + ' + cleanText(toppingRaw) : ''} + ${sugar} + ${ice} + ${size} *${qty}`;
+            const zhPreview = `${drinkRaw.split(' / ')[1]} (${size}) x${qty}`;
+
+            basket.push({ vn: vnLine, zh: zhPreview });
+            updateBasketUI();
+            resetInputs();
+        }
+
+        function updateBasketUI() {
+            const area = document.getElementById('basketArea');
+            if (basket.length === 0) {
+                area.innerHTML = `<p class="text-center text-gray-400 text-sm py-4 italic">尚未加入飲品</p>`;
+                return;
+            }
+
+            // 更新：改進 HTML 結構，確保按鈕不會被擠走
+            area.innerHTML = basket.map((item, index) => `
+                <div class="ios-card basket-item p-3 mb-2">
+                    <div class="basket-content">
+                        <div class="text-xs font-bold text-gray-800 break-words">${item.zh}</div>
+                        <div class="text-[10px] text-gray-400 truncate">${item.vn}</div>
+                    </div>
+                    <button onclick="removeFromBasket(${index})" class="w-8 h-8 flex-shrink-0 flex items-center justify-center text-red-300 active:text-red-500">
+                        <i class="fas fa-times-circle text-lg"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeFromBasket(index) {
+            basket.splice(index, 1);
+            updateBasketUI();
+        }
+
+        function resetInputs() {
+            document.getElementById('drinkSelect').value = "";
+            document.getElementById('toppingSelect').value = "";
+            document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+            document.getElementById('qtyInput').value = 1;
+        }
+
+        function generateOrder() {
+            if (basket.length === 0) { alert("清單中還沒有飲品！"); return; }
+            const resultText = basket.map(item => item.vn).join('\n');
+            document.getElementById('resultText').innerText = resultText;
+            document.getElementById('resultModal').classList.replace('hidden', 'flex');
+        }
+
+        function copyOrder() {
+            navigator.clipboard.writeText(document.getElementById('resultText').innerText).then(() => {
+                alert("已複製全部點單內容！");
+                closeModal();
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').classList.replace('flex', 'hidden');
+        }
+    </script>
+</body>
+</html>
