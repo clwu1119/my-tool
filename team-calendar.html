@@ -21,7 +21,7 @@
       font-family: -apple-system, system-ui, sans-serif;
       margin: 0;
       padding-bottom: 120px;
-      user-select: none; /* 防止長按文字彈出菜單 */
+      user-select: none;
       -webkit-user-select: none;
     }
 
@@ -40,10 +40,7 @@
       align-items: center;
     }
 
-    /* 日曆卡片 */
-    .calendar-section {
-      padding: 12px;
-    }
+    .calendar-section { padding: 12px; }
 
     .month-header {
       font-size: 22px;
@@ -68,10 +65,17 @@
       border: 0.5px solid #f2f2f7;
       vertical-align: top;
       padding: 5px;
-      transition: background 0.1s;
+      position: relative;
     }
 
     td:active { background: #E5E5EA; }
+
+    /* 標記今日日期 */
+    .today-highlight {
+      background-color: #FFF9C4 !important;
+      outline: 2px solid var(--ios-blue);
+      z-index: 1;
+    }
 
     .day-label {
       font-size: 14px;
@@ -81,7 +85,6 @@
       margin-bottom: 4px;
     }
 
-    /* 標籤樣式 */
     .tag {
       font-size: 10px;
       font-weight: bold;
@@ -150,9 +153,9 @@
 <body>
 
   <header class="app-header">
-    <div style="font-weight: 800; font-size: 1.2rem;">📅 排假表</div>
-    <select id="monthJump" class="form-select form-select-sm" style="width: auto; background: #efeff4; border: none; border-radius: 10px;">
-      </select>
+    <div onclick="location.href='index.html'" style="cursor:pointer;"><i class="bi bi-chevron-left"></i></div>
+    <div style="font-weight: 800; font-size: 1.1rem;">📅 排假表</div>
+    <select id="monthJump" class="form-select form-select-sm" style="width: auto; background: #efeff4; border: none; border-radius: 10px;"></select>
   </header>
 
   <div id="calendar-root" class="calendar-section"></div>
@@ -200,7 +203,7 @@
       selector.appendChild(div);
     });
 
-    // 4. 渲染月份跳转選單
+    // 4. 渲染月份跳轉選單
     const jump = document.getElementById('monthJump');
     years.forEach(y => {
       monthNames.forEach((m, i) => {
@@ -218,6 +221,7 @@
     // 5. 渲染日曆核心
     function renderApp() {
       const root = document.getElementById('calendar-root');
+      const now = new Date();
       root.innerHTML = '';
 
       years.forEach(year => {
@@ -233,12 +237,11 @@
           const card = document.createElement('div');
           card.className = 'calendar-card';
           
-          let tableHtml = `<table><thead><tr><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th><th>日</th></tr></thead><tbody>`;
+          let tableHtml = `<table><thead><tr><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th><th>日</th></tr></thead><tbody><tr>`;
           
           let firstDay = new Date(year, month, 1).getDay();
           if (firstDay === 0) firstDay = 7;
           
-          tableHtml += `<tr>`;
           for (let i = 1; i < firstDay; i++) tableHtml += `<td></td>`;
 
           const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -246,14 +249,17 @@
             const key = `${year}-${month+1}-${day}`;
             const tags = calendarData[key] || [];
             
+            // 判斷是否為今日
+            const isToday = now.getFullYear() === year && now.getMonth() === month && now.getDate() === day;
+            
             let tagsHtml = `<div id="tags-${key}">`;
             tags.forEach(pName => {
               const pObj = people.find(x => x.name === pName);
-              tagsHtml += `<div class="tag" style="background:${pObj.color}">${pName}</div>`;
+              if(pObj) tagsHtml += `<div class="tag" style="background:${pObj.color}">${pName}</div>`;
             });
             tagsHtml += `</div>`;
 
-            tableHtml += `<td onclick="toggleDate('${key}')">
+            tableHtml += `<td onclick="toggleDate('${key}')" class="${isToday ? 'today-highlight' : ''}">
               <span class="day-label">${day}</span>
               ${tagsHtml}
             </td>`;
@@ -272,15 +278,10 @@
     window.toggleDate = function(key) {
       if (!calendarData[key]) calendarData[key] = [];
       const idx = calendarData[key].indexOf(currentPerson);
-      
-      if (idx >= 0) {
-        calendarData[key].splice(idx, 1);
-      } else {
-        calendarData[key].push(currentPerson);
-      }
-      
+      if (idx >= 0) calendarData[key].splice(idx, 1);
+      else calendarData[key].push(currentPerson);
       saveToLocal();
-      updateCell(key); // 局部刷新，不重新渲染整個頁面以保持流暢
+      updateCell(key);
     };
 
     function updateCell(key) {
@@ -289,20 +290,27 @@
       let html = '';
       tags.forEach(pName => {
         const pObj = people.find(x => x.name === pName);
-        html += `<div class="tag" style="background:${pObj.color}">${pName}</div>`;
+        if(pObj) html += `<div class="tag" style="background:${pObj.color}">${pName}</div>`;
       });
       container.innerHTML = html;
     }
 
-    // 7. 今日按鈕
-    document.getElementById('todayBtn').onclick = () => {
-      const d = new Date();
-      const target = document.getElementById(`cal-${d.getFullYear()}-${d.getMonth()+1}`);
-      if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
-    };
+    // 7. 自動跳轉功能
+    function scrollToCurrentMonth(isSmooth = false) {
+      const now = new Date();
+      const targetId = `cal-${now.getFullYear()}-${now.getMonth()+1}`;
+      const target = document.getElementById(targetId);
+      if (target) {
+        document.getElementById('monthJump').value = targetId;
+        window.scrollTo({ top: target.offsetTop - 80, behavior: isSmooth ? 'smooth' : 'auto' });
+      }
+    }
 
-    // 啟動渲染
+    document.getElementById('todayBtn').onclick = () => scrollToCurrentMonth(true);
+
+    // 啟動
     renderApp();
+    setTimeout(() => scrollToCurrentMonth(false), 200);
   </script>
 </body>
 </html>
