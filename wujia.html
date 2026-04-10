@@ -29,22 +29,28 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='C19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.25rem;
         }
-        /* 優化刪除按鈕不被擠出的樣式 */
-        .basket-item { border-left: 4px solid #EAB308; display: flex; align-items: center; justify-content: space-between; }
-        .basket-content { min-width: 0; flex: 1; padding-right: 8px; }
+        .basket-item { border-left: 4px solid #EAB308; }
     </style>
 </head>
 <body class="p-4 max-w-md mx-auto pb-24">
 
     <header class="mb-6 mt-4 text-center">
         <h1 class="text-2xl font-black text-gray-900 tracking-tight">WU JIA (吳家)</h1>
-        <p class="text-yellow-600 font-bold text-sm">TAIWAN NO.1</p>
+        <p class="text-yellow-600 font-bold text-sm">VIETNAM SPECIALTY TEA</p>
     </header>
 
     <div class="section-title"><i class="fas fa-leaf"></i> DRINK / 飲品 (吳家)</div>
     <div class="ios-card p-2">
         <select id="drinkSelect" class="w-full p-4 bg-transparent text-base font-medium focus:outline-none cursor-pointer">
             <option value="">請選擇飲品...</option>
+            <optgroup label="新品上市">
+                <option value="★Trà Xí Muội Ngo Gia /酸梅湯">★Trà Xí Muội Ngo Gia /酸梅湯</option>
+                <option value="Trà Xí Muội Bí Đao / 酸梅冬瓜">Trà Xí Muội Bí Đao / 酸梅冬瓜</option>
+                <option value="Trà Xí Muội Ô Long / 酸梅烏龍">Trà Xí Muội Ô Long / 酸梅烏龍</option>
+                <option value="Hồng Trà Kem Cheese / 奶蓋紅茶">Hồng Trà Kem Cheese / 奶蓋紅茶</option>
+                <option value="★Trà Xanh Kem Cheese / 奶蓋綠茶">Trà Xanh Kem Cheese / 奶蓋綠茶</option>
+                <option value="Ô Long Kem Cheese / 奶蓋烏龍">Ô Long Kem Cheese / 奶蓋烏龍</option>
+            </optgroup>
             <optgroup label="水果拚好茶 (Trái Cây)">
                 <option value="★Hồng Trà Chanh dai loan / 台灣檸檬紅茶">★Hồng Trà Chanh dai loan / 台灣檸檬紅茶</option>
                 <option value="★Trà Xanh Chanh dai loan / 台灣檸檬綠茶">★Trà Xanh Chanh dai loan / 台灣檸檬綠茶</option>
@@ -64,7 +70,7 @@
                 <option value="Trà Sữa Bí Đao / 冬瓜奶茶">Trà Sữa Bí Đao / 冬瓜奶茶</option>
                 <option value="Trà Sữa Trân Châu Đường Đen / 黑糖珍珠奶茶">Trà Sữa Trân Châu Đường Đen / 黑糖珍珠奶茶</option>
                 <option value="Trà Sữa Socola / 巧克力奶茶">Trà Sữa Socola / 巧克力奶茶</option>
-                <option value="Trà Khoai Môn Nghiền / 芋泥奶茶">Trà Khoai Môn Nghiền / 芋泥奶茶</option>
+
             </optgroup>
             <optgroup label="Milk 拿鐵 (Latte)">
                 <option value="★Hồng Trà Latte / 紅茶拿鐵">★Hồng Trà Latte / 紅茶拿鐵</option>
@@ -76,7 +82,15 @@
                 <option value="Sữa Tươi Khoai Môn Nghiền / 芋泥鮮奶">Sữa Tươi Khoai Môn Nghiền / 芋泥鮮奶</option>
                 <option value="Sữa Tươi Trân Châu Đường Đen / 黑糖珍珠鮮奶">Sữa Tươi Trân Châu Đường Đen / 黑糖珍珠鮮奶</option>
             </optgroup>
-            <optgroup label="解渴純喝茶 (Trà Nguyên Bản)">
+                <optgroup label="推薦熱銷">
+                <option value="Trà Ô Long Bí Đao / 冬瓜烏龍">Trà Ô Long Bí Đao / 冬瓜烏龍</option>
+                <option value="Hồng Trà Kem Tươi  / 冰淇淋紅茶">Hồng Trà Kem Tươi  / 冰淇淋紅茶</option>
+                <option value="Trà Xanh Ổi Mai Chanh Dây / 百香梅子綠">Trà Xanh Ổi Mai Chanh Dây / 百香梅子綠</option>
+                <option value="Ô Long Ổi Mai Chanh Dây / 百香梅子烏龍">Ô Long Ổi Mai Chanh Dây / 百香梅子烏龍</option>
+                <option value="★Bát Bảo Ngô Gia (Ngọt) / 八寶冰（甜味）">★Bát Bảo Ngô Gia (Ngọt) / 八寶冰（甜味）</option>
+                <option value="Trà Sữa Khoai Môn Nghiền / 芋泥奶茶">Trà Sữa Khoai Môn Nghiền / 芋泥奶茶</option>
+            </optgroup>
+            <optgroup label="解渴純喝茶">
                 <option value="★Hồng Trà Đài Loan / 台灣紅茶">★Hồng Trà Đài Loan / 台灣紅茶</option>
                 <option value="Hồng Trà Vải Thiều / 荔枝紅茶">Hồng Trà Vải Thiều / 荔枝紅茶</option>
                 <option value="Trà Bí đao Ngô Gia / 吳家冬瓜茶">Trà Bí đao Ngô Gia / 吳家冬瓜茶</option>
@@ -100,12 +114,19 @@
             <option value="Trân Châu 30 Trắng / 原味寒天">Trân Châu 30 Trắng / 原味寒天</option>
             <option value="Trân Châu Đường Đen / 黑糖珍珠">Trân Châu Đường Đen / 黑糖珍珠</option>
             <option value="Hạt Thủy Tinh Củ Năng / 馬蹄爆爆珠">Hạt Thủy Tinh Củ Năng / 馬蹄爆爆珠</option>
+            <option value="Hạt Thủy Tinh Lúa Mạch / 青裸爆爆珠">Hạt Thủy Tinh Lúa Mạch / 青裸爆爆珠</option>
+            <option value="Thạch Aiyu / 愛玉凍">Thạch Aiyu / 愛玉凍</option>
+            <option value="Thạch Dừa Hương Đào / 蜜桃椰果">Thạch Dừa Hương Đào / 蜜桃椰果</option>
+            <option value="Đào Miếng / 蜜桃果肉">Đào Miếng / 蜜桃果肉</option>
+            <option value="Thạch Sương Sáo Viên (8) / 黑色仙草凍 (8粒)">Thạch Sương Sáo Viên (8) / 黑色仙草凍 (8粒)</option>
             <option value="Trân Châu Hoàng Kim Baby / 黃金baby珍珠">Trân Châu Hoàng Kim Baby / 黃金baby珍珠</option>
+            <option value="Kem Tươi Vani / 香草冰淇淋">Kem Tươi Vani / 香草冰淇淋</option>
             <option value="Trân Châu Khoai Môn / 小芋圓">Trân Châu Khoai Môn / 小芋圓</option>
             <option value="Hạt Sen / 蓮子">Hạt Sen / 蓮子</option>
             <option value="Pudding Trứng / 蛋蛋布丁">Pudding Trứng / 蛋蛋布丁</option>
             <option value="Kem Cheese / 朵朵奶蓋">Kem Cheese / 朵朵奶蓋</option>
-            <option value="Khoai Môn Nghiền / 芋泥">Khoai Môn Nghiền / 芋泥</option>
+            <option value="Thạch Sữa Viên (8) / 白色牛奶凍 (8粒)">Thạch Sữa Viên (8) / 白色牛奶凍 (8粒)</option>
+
         </select>
     </div>
 
@@ -202,6 +223,7 @@
 
             if (!drinkRaw || !sugar || !ice || !size) { alert("請完整選擇規格！"); return; }
 
+            // 存儲越南文指令與中文預覽
             const vnLine = `${cleanText(drinkRaw)}${toppingRaw ? ' + ' + cleanText(toppingRaw) : ''} + ${sugar} + ${ice} + ${size} *${qty}`;
             const zhPreview = `${drinkRaw.split(' / ')[1]} (${size}) x${qty}`;
 
@@ -217,15 +239,14 @@
                 return;
             }
 
-            // 更新：改進 HTML 結構，確保按鈕不會被擠走
             area.innerHTML = basket.map((item, index) => `
-                <div class="ios-card basket-item p-3 mb-2">
-                    <div class="basket-content">
-                        <div class="text-xs font-bold text-gray-800 break-words">${item.zh}</div>
+                <div class="ios-card basket-item p-3 flex justify-between items-center bg-white mb-2">
+                    <div class="flex-1">
+                        <div class="text-xs font-bold text-gray-800">${item.zh}</div>
                         <div class="text-[10px] text-gray-400 truncate">${item.vn}</div>
                     </div>
-                    <button onclick="removeFromBasket(${index})" class="w-8 h-8 flex-shrink-0 flex items-center justify-center text-red-300 active:text-red-500">
-                        <i class="fas fa-times-circle text-lg"></i>
+                    <button onclick="removeFromBasket(${index})" class="ml-2 text-red-300 active:text-red-500">
+                        <i class="fas fa-times-circle"></i>
                     </button>
                 </div>
             `).join('');
@@ -245,6 +266,7 @@
 
         function generateOrder() {
             if (basket.length === 0) { alert("清單中還沒有飲品！"); return; }
+            
             const resultText = basket.map(item => item.vn).join('\n');
             document.getElementById('resultText').innerText = resultText;
             document.getElementById('resultModal').classList.replace('hidden', 'flex');
